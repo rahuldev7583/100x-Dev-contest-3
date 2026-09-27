@@ -10,10 +10,30 @@ pub struct TokenEntry {
 
 pub fn build_portfolio(entries: &[TokenEntry]) -> HashMap<String, u64> {
     let _ = entries;
-    todo!("build the portfolio")
+    let mut port: HashMap<String, u64> = HashMap::new();
+
+    let itr = entries.iter();
+
+    for i in itr {
+        //port.insert(i.symbol.clone(), i.amount);
+        let ast = port.get(&i.symbol);
+
+        match ast {
+            None => port.insert(i.symbol.clone(), i.amount),
+            Some(a) => port.insert(i.symbol.clone(), a + i.amount),
+        };
+    }
+
+    println!("port: {:?}", port);
+    return port;
 }
 
 pub fn balance_of(portfolio: &HashMap<String, u64>, symbol: &str) -> u64 {
     let _ = (portfolio, symbol);
-    todo!("look up the balance")
+    let ast = portfolio.get(symbol);
+
+    match ast {
+        None => 0,
+        Some(a) => a.to_owned(),
+    }
 }
