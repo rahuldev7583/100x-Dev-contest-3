@@ -2,6 +2,8 @@ use futures::channel::oneshot;
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread::{self, JoinHandle};
 
+use crate::BalanceMessage::{Credit, Read};
+
 // Complete the three functions marked with todo! using the rules in README.txt.
 
 pub enum BalanceMessage {
@@ -34,18 +36,21 @@ impl BalanceService {
 
     pub fn credit(&self, user_id: u32, amount: u64) -> Result<(), ServiceError> {
         let _ = (user_id, amount);
-        todo!("send a credit request")
+        self.sender.send(BalanceMessage::Credit { user_id, amount });
+        Ok(())
     }
 
     pub async fn get_balance(&self, user_id: u32) -> Result<u64, ServiceError> {
         let _ = user_id;
-        todo!("request and await this user's balance")
+
+        Ok(())
     }
 }
 
 pub fn start_service() -> (BalanceService, JoinHandle<()>) {
     let (sender, receiver) = mpsc::channel();
     let worker = thread::spawn(move || run_worker(receiver));
+
     (BalanceService { sender }, worker)
 }
 
@@ -55,6 +60,18 @@ pub fn deliver_reply(reply: oneshot::Sender<u64>, balance: u64) {
 }
 
 pub fn run_worker(receiver: Receiver<BalanceMessage>) {
-    let _ = receiver;
-    todo!("process requests until the channel closes")
+    let rc = receiver;
+    //todo!("process requests until the channel closes")
+
+    println!("rc: {:?}", rc);
+
+    let msg = rc.recv();
+
+    match msg {
+        Ok(bal_msg) => match bal_msg {
+            Credit { user_id, amount } => todo!(),
+            Read { user_id, reply } => todo!(),
+        },
+        Err(_) => todo!(),
+    }
 }
